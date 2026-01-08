@@ -4,6 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS di Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+
     <link rel="icon" type="image/x-icon" href="Images/Logo/Meteo di zona.png">
     <link rel="stylesheet" type="text/CSS" href="Style/style.css">
 
@@ -19,6 +24,8 @@
     </header>
 
     <div id="selezionaRegione">
+        <p id="message"></p>
+
         <fieldset id="selectRegioni">
             <legend>Regione</legend>
             <select id="regioni">
@@ -27,7 +34,7 @@
                 <option value="Basilicata">Basilicata</option>
                 <option value="Calabria">Calabria</option>
                 <option value="Campania">Campania</option>
-                <option value="Emilia-Romagna">Veneto</option>
+                <option value="Emilia-Romagna">Emilia-Romagna</option>
                 <option value="Friuli-Venezia Giulia">Friuli-Venezia Giulia</option>
                 <option value="Lazio">Lazio</option>
                 <option value="Liguria">Liguria</option>
@@ -46,25 +53,19 @@
             </select>
             <button id="cercaRegione">Cerca</button>
 
-            <p></p>
-        </fieldset>
-
-        <fieldset id="selectProvincie">
-            <legend>Provincia</legend>
-
-            <button id="cercaProvincia">Cerca</button><br>
-        </fieldset>
-        
-        <fieldset id="selectComuni">
-            <legend>Comune</legend>
             
-            <button id="cercaComune">Cerca</button><br>
         </fieldset>
     </div>
+
+    <div id="map" style="height: 500px; width: 70%; left: 30px; margin-top: 20px;"></div>
 
     <footer>
         
     </footer>
-
+    <!-- JavaScript di Leaflet -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+<script src="Script/index.js"></script>
 </body>
 </html>
