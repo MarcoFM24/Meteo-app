@@ -45,10 +45,16 @@ const btnProvincie = document.getElementById("cercaRegione");
 // Dopo aver selezionato la regione si preme questo bottone, e crea il fieldset delle provincie
 btnProvincie.addEventListener("click", menuProvince);    
 function menuProvince (){
+
     let provinciaFieldset = document.getElementById("province");
-        if(provinciaFieldset != null){
-            provinciaFieldset.remove(provinciaFieldset)
+    if(provinciaFieldset != null){
+        provinciaFieldset.remove(provinciaFieldset)
     }
+    let comuneFieldset = document.getElementById("comuni");
+    if(comuneFieldset != null){
+        comuneFieldset.remove(comuneFieldset)
+    }
+
     const regione = document.getElementById("regioni");
     const output = document.getElementById("selezionaRegione");
     message.textContent = "Caricamento delle province in corso...";
@@ -135,7 +141,7 @@ function menuComuni(){
 
         //------------Creo il select------------
         comuneSelect = document.createElement("select");
-        comuneSelect.id = "selectProvincie";
+        comuneSelect.id = "selectComuni";
         comuneFieldset.appendChild(comuneSelect);
 
         //------------inserisco le option------------
@@ -147,7 +153,7 @@ function menuComuni(){
         }
 
         // Collegamento del bottone cercaMeteo per mostrare solo il comune selezionato
-        const btnMeteo = creaBottone("cercaMeteo", "Mostra Comune sulla Mappa", comuneFieldset);
+        const btnMeteo = creaBottone("cercaMeteo", "Centra Comune sulla Mappa", comuneFieldset);
         btnMeteo.addEventListener("click", mostraComuneSelezionato);
 
         message.textContent = "Comuni caricati con successo!";
@@ -186,7 +192,7 @@ async function mostraTuttiComuniProvincia() {
 
 // Mostra solo il comune selezionato sulla mappa
 async function mostraComuneSelezionato() {
-    const comuneSelect = document.getElementById("selectProvincie");
+    const comuneSelect = document.getElementById("selectComuni");
     const provincia = document.getElementById("selectProvince");
     
     if (!comuneSelect || comuneSelect.value === "Non selezionato") {
@@ -309,6 +315,10 @@ apparent_temperature - Apparent temperature is the perceived feels-like temperat
 wind_speed_10m - Wind speed at 10 meters above ground.
 wind_direction_10m - Wind direction at 10 meters above ground.
 rain - Rain from large scale weather systems of the preceding hour in millimeter
+
+current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m
+&
+daily=temperature_2m_min,temperature_2m_max,precipitation_sum,precipitation_probability_max
 */
 
 /**
@@ -429,7 +439,7 @@ async function creaContenutoPopup(comune, coords) {
     let html = `
         <div style="min-width: 200px;">
             <h3 style="margin: 0 0 10px 0;">${comune.nome}</h3>
-            <p style="margin: 5px 0;"><strong>Provincia:</strong> ${comune.provincia.nome} (${comune.provincia.sigla})</p>
+            <p style="margin: 5px 0;"><strong>Provincia:</strong> ${comune.provincia.nome}</p>
             <p style="margin: 5px 0;"><strong>Regione:</strong> ${comune.regione.nome}</p>
     `;
    
@@ -439,8 +449,9 @@ async function creaContenutoPopup(comune, coords) {
         if (meteo) {
             html += `
                 <hr style="margin: 10px 0;">
-                <p style="margin: 5px 0;"><strong>🌡️ Temperatura:</strong> ${meteo.temperatura}°C</p>
-                <p style="margin: 5px 0;"><strong>💨 Vento:</strong> ${meteo.vento} km/h</p>
+                <p style="margin: 5px 0;"><strong>🌡️ Temperatura:</strong> ${meteo.temperatura}°C (p. ${meteo.temperaturaPercepita}°C)</p>
+                <p style="margin: 5px 0;"><strong>💨 Vento:</strong> ${meteo.vento} km/h (dir. ${meteo.dirVento}°)</p>
+                <p style="margin: 5px 0;"><strong>🌧️ Precipitazioni:</strong> ${meteo.precipitazioni} mm (${meteo.probPrecipitazioni}%)</p>
             `;
         }
     } catch (error) {
@@ -472,7 +483,7 @@ async function creaContenutoPopup(comune, coords) {
  * @returns {Object} Dati meteo
  */
 async function ottieniMeteoAttuale(lat, lng) {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,wind_speed_10m&timezone=auto`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=temperature_2m_min,temperature_2m_max,precipitation_sum,precipitation_probability_max&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m&timezone=auto`;
    
     try {
         const response = await fetch(url);
@@ -484,10 +495,17 @@ async function ottieniMeteoAttuale(lat, lng) {
         
         const data = await response.json();
        
-        if (data.current) {
+        if (data.current && data.daily) {
             return {
                 temperatura: data.current.temperature_2m,
-                vento: data.current.wind_speed_10m
+                temperaturaPercepita: data.current.apparent_temperature,
+                umidita: data.current.relative_humidity_2m,
+                vento: data.current.wind_speed_10m,
+                dirVento: data.current.wind_direction_10m,
+                temperaturaMinima: data.daily.temperature_2m_min,
+                temperaturaMassima: data.daily.temperature_2m_max,
+                precipitazioni: sum(data.daily.precipitation_sum),
+                probPrecipitazioni: max(data.daily.precipitation_probability_max)
             };
         }
     } catch (error) {
@@ -496,4 +514,23 @@ async function ottieniMeteoAttuale(lat, lng) {
     }
    
     return null;
+}
+
+function sum(arr){
+    let somma = 0;
+    if(arr.length == 0) return 0;
+    for(let i = 0; i < arr.length; i++){
+        somma += arr[i];
+    }
+    
+    return somma;
+}
+
+function max(arr){
+    if(arr.length == 0) return 0;
+    let massimo = -1;
+    for(let i = 0; i < arr.length; i++){
+        if(massimo < arr[i]) massimo = arr[i];
+    }
+    return massimo;
 }
