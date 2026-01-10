@@ -20,7 +20,6 @@ function caricaComuni() {
 
     fetch(URL_COMUNI)
         .then(response => {
-            // ✅ PUNTO 4: Gestione errori migliorata
             if (!response.ok) {
                 throw new Error(`Errore HTTP! Status: ${response.status}`);
             }
@@ -28,7 +27,6 @@ function caricaComuni() {
         })
         .then(comuniArray => {
             comuni = comuniArray;
-            console.log(comuni);
             message.textContent = "Caricamento delle regioni completato con successo!";
             message.style.color = "green";
         })
@@ -243,7 +241,6 @@ function isComuneCorretto(province, comune){
     return comune.provincia.nome == province;
 }
 
-// ✅ PUNTO 7: Ottimizzazione con Set
 function rimuoviDuplicati(arr){
     return [...new Set(arr)].sort();
 }
@@ -264,66 +261,6 @@ function creaOption(valore, text, parent){
     return option;
 }
 
-/* RISPOSTA DA API GEOCODING - STRUTTURA DEL JSON
-[
-    {
-        "id":3171728,
-        "name":"Padova",
-        "latitude":45.40797,
-        "longitude":11.88586,
-        "elevation":12.0,
-        "feature_code":"PPLA2",
-        "country_code":"IT",
-        "admin1_id":3164604,
-        "admin2_id":3171727,
-        "admin3_id":6542281,
-        "timezone":"Europe/Rome",
-        "population":203725,
-        "country_id":3175395,
-        "country":"Italia",
-        "admin1":"Veneto",
-        "admin2":"Padova",
-        "admin3":"Padova"
-    }
-],
-"generationtime_ms":0.41544437
-}
-*/
-
-/*
-https://api.openmeteo.com/v1/forecast?latitude=45.4064&longitude=11.8768&current=temperature_2m,
-wind_speed_10m&timezone=auto
-Analisi:
-https://api.openmeteo.com/v1/forecast - sito di richiesta api
-? - passo parametri
-latitude=45.4064 - parametro con nome latitude e valore 45.4064
-& - chiave di concatenazione
-longitude=11.8768 - vedi latitude
-& - chiave di concatenazione
-current=temperature_2m,wind_speed_10m parametro con nome current e più valori intervallati da virgola
-IMPORTANTE sono i parametri dove si aspetta una risposta
-& - chiave di concatenazione
-timezone=auto - serve passare per il timezone che indicherà l'orario inserito nella risposta
-
-NON PRESENTE - SOSTITUISCE CURRENT
-daily=temperature_2m,wind_speed_10m - parametro con nome daily, indica la richiesta di dati giornalieri e non attuali
-
-TUTTI I PARAMETRI A CUI E' OPPORTUNO FARE LA CHIAMATA:
-temperature_2m - Air temperature at 2 meters above ground
-relative_humidity_2m - Relative humidity at 2 meters above ground
-apparent_temperature - Apparent temperature is the perceived feels-like temperature combining wind chill factor, relative humidity and solar radiation
-wind_speed_10m - Wind speed at 10 meters above ground.
-wind_direction_10m - Wind direction at 10 meters above ground.
-rain - Rain from large scale weather systems of the preceding hour in millimeter
-
-current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m
-&
-daily=temperature_2m_min,temperature_2m_max,precipitation_sum,precipitation_probability_max
-*/
-
-/**
- * Inizializza la mappa Leaflet
- */
 function inizializzaMappa() {
     // Crea la mappa centrata sull'Italia
     mappa = L.map('map').setView([42.5, 12.5], 6);
@@ -340,10 +277,6 @@ function inizializzaMappa() {
 
 document.addEventListener("DOMContentLoaded", inizializzaMappa);
 
-/**
- * Mostra i comuni sulla mappa con marker
- * @param {Array} comuniProvincia - Array di comuni da mostrare
- */
 async function mostraComuniSuMappa(comuniProvincia) {
     // Rimuovi i marker precedenti
     layerMarkers.clearLayers();
@@ -382,20 +315,13 @@ async function mostraComuniSuMappa(comuniProvincia) {
     }
 }
 
-/**
- * Ottiene le coordinate di un comune tramite l'API Geocoding di Open-Meteo
- * @param {string} nomeComune - Nome del comune
- * @param {string} provincia - Nome della provincia
- * @param {string} regione - Nome della regione
- * @returns {Object} Oggetto con lat e lng
- */
+
 async function ottieniCoordinate(nomeComune, provincia, regione) {
     const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(nomeComune)}&count=5&language=it&format=json&countryCode=IT`;
    
     try {
         const response = await fetch(url);
-        
-        // ✅ PUNTO 4: Gestione errori migliorata
+     
         if (!response.ok) {
             throw new Error(`Errore HTTP! Status: ${response.status}`);
         }
@@ -429,12 +355,6 @@ async function ottieniCoordinate(nomeComune, provincia, regione) {
     return null;
 }
 
-/**
- * Crea il contenuto HTML del popup per un marker
- * @param {Object} comune - Oggetto comune
- * @param {Object} coords - Coordinate {lat, lng}
- * @returns {string} HTML del popup
- */
 async function creaContenutoPopup(comune, coords) {
     let html = `
         <div style="min-width: 200px;">
@@ -476,19 +396,13 @@ async function creaContenutoPopup(comune, coords) {
     return html;
 }
 
-/**
- * Ottiene i dati meteo attuali per una posizione
- * @param {number} lat - Latitudine
- * @param {number} lng - Longitudine
- * @returns {Object} Dati meteo
- */
+
 async function ottieniMeteoAttuale(lat, lng) {
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=temperature_2m_min,temperature_2m_max,precipitation_sum,precipitation_probability_max&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m&timezone=auto`;
    
     try {
         const response = await fetch(url);
         
-        // ✅ PUNTO 4: Gestione errori migliorata
         if (!response.ok) {
             throw new Error(`Errore HTTP! Status: ${response.status}`);
         }
@@ -523,7 +437,7 @@ function sum(arr){
         somma += arr[i];
     }
     
-    return somma;
+    return somma.floor();
 }
 
 function max(arr){
