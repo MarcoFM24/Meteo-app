@@ -2,69 +2,88 @@
 <html lang="it">
 
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- CSS di Leaflet -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-crossorigin=""/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- CSS Leaflet per la mappa interattiva -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
 
-<link rel="icon" type="image/x-icon" href="Images/Logo/LogoMeteo.png">
-<link rel="stylesheet" type="text/CSS" href="Style/style.css">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="Images/Logo/LogoMeteo.png">
+    
+    <!-- Foglio di stile personalizzato -->
+    <link rel="stylesheet" type="text/css" href="Style/style.css">
 
-<title>Meteo di zona</title>
+    <title>Vremea</title>
 </head>
 
-
 <body>
-<header>
-<h1>Meteo di Zona</h1>
-<p id="sottotitolo">Seleziona la tua regione per le previsioni</p>
-</header>
+    <!-- Nuvole animate di sfondo -->
+    <div class="cloud" style="top: 10%; animation-duration: 35s;"></div>
+    <div class="cloud" style="top: 20%; animation-duration: 50s; animation-delay: -10s;"></div>
+    <div class="cloud" style="top: 15%; animation-duration: 45s; animation-delay: -20s;"></div>
+    <div class="cloud" style="top: 30%; animation-duration: 40s; animation-delay: -5s;"></div>
+    <div class="cloud" style="top: 45%; animation-duration: 55s; animation-delay: -15s;"></div>
+    <div class="cloud" style="top: 60%; animation-duration: 48s; animation-delay: -25s;"></div>
+    <div class="cloud" style="top: 75%; animation-duration: 42s; animation-delay: -30s;"></div>
+    <div class="cloud" style="top: 85%; animation-duration: 52s; animation-delay: -12s;"></div>
 
-<div id="selezionaRegione">
-<p id="message">Scopri il meteo nella tua regione</p>
+    <!-- Header sticky con titolo e sottotitolo -->
+    <header>
+        <h1>Vremea</h1>
+        <p id="sottotitolo">Previsioni intelligenti</p>
+    </header>
 
-<fieldset id="selectRegioni">
-<legend>Regione</legend>
-<select id="regioni">
-<option value="Non selezionato">Seleziona una Regione</option>
-<option value="Abruzzo">Abruzzo</option>
-<option value="Basilicata">Basilicata</option>
-<option value="Calabria">Calabria</option>
-<option value="Campania">Campania</option>
-<option value="Emilia-Romagna">Emilia-Romagna</option>
-<option value="Friuli-Venezia Giulia">Friuli-Venezia Giulia</option>
-<option value="Lazio">Lazio</option>
-<option value="Liguria">Liguria</option>
-<option value="Lombardia">Lombardia</option>
-<option value="Molise">Molise</option>
-<option value="Marche">Marche</option>
-<option value="Piemonte">Piemonte</option>
-<option value="Puglia">Puglia</option>
-<option value="Sardegna">Sardegna</option>
-<option value="Sicilia">Sicilia</option>
-<option value="Toscana">Toscana</option>
-<option value="Trentino-Alto Adige/Südtirol">Trentino-Alto Adige</option>
-<option value="Umbria">Umbria</option>
-<option value="Valle d'Aosta/Vallée d'Aoste">Valle d'Aosta</option>
-<option value="Veneto">Veneto</option>
-</select>
-<button id="cercaRegione">Cerca</button>
-</fieldset>
-</div>
+    <!-- Sezione selezione regione -->
+    <div id="selezionaRegione">
+        <p id="message">Scopri il meteo nella tua regione</p>
 
-<div id="map" style="height: 500px; width: 70%; margin: 0 auto;"></div>
+        <!-- Form per selezionare la regione -->
+        <fieldset id="selectRegioni">
+            <legend>Regione</legend>
+            <select id="regioni">
+                <option value="Non selezionato">Seleziona una Regione</option>
+                <option value="Abruzzo">Abruzzo</option>
+                <option value="Basilicata">Basilicata</option>
+                <option value="Calabria">Calabria</option>
+                <option value="Campania">Campania</option>
+                <option value="Emilia-Romagna">Emilia-Romagna</option>
+                <option value="Friuli-Venezia Giulia">Friuli-Venezia Giulia</option>
+                <option value="Lazio">Lazio</option>
+                <option value="Liguria">Liguria</option>
+                <option value="Lombardia">Lombardia</option>
+                <option value="Molise">Molise</option>
+                <option value="Marche">Marche</option>
+                <option value="Piemonte">Piemonte</option>
+                <option value="Puglia">Puglia</option>
+                <option value="Sardegna">Sardegna</option>
+                <option value="Sicilia">Sicilia</option>
+                <option value="Toscana">Toscana</option>
+                <option value="Trentino-Alto Adige/Südtirol">Trentino-Alto Adige</option>
+                <option value="Umbria">Umbria</option>
+                <option value="Valle d'Aosta/Vallée d'Aoste">Valle d'Aosta</option>
+                <option value="Veneto">Veneto</option>
+            </select>
+            <button id="cercaRegione">Cerca</button>
+        </fieldset>
+    </div>
 
-<footer>
-<small>App Meteo — Dati forniti da Open-Meteo</small>
-</footer>
+    <!-- Mappa interattiva Leaflet -->
+    <div id="map" style="height: 500px; width: 70%; margin: 0 auto;"></div>
 
-<!-- JavaScript di Leaflet -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-crossorigin=""></script>
-<script src="Script/index.js"></script>
+    <!-- Footer con crediti -->
+    <footer>
+        <small>App Meteo — Dati forniti da Open-Meteo</small>
+    </footer>
+
+    <!-- Libreria JavaScript Leaflet -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+    
+    <!-- Script personalizzato per la logica dell'app -->
+    <script src="Script/index.js"></script>
 </body>
 </html>
-
