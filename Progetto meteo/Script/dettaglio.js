@@ -1,12 +1,15 @@
-/* dettaglio.js
-- legge i parametri dalla query string (nome, lat, lon)
-- chiama Open-Meteo (current + daily)
-- mostra meteo attuale + previsioni 5 giorni
-- sfondo dinamico stile Apple Weather
+/*
+ALL RIGHTS RESERVED.
+Authors: Marco Ferraresso, Federico Chen, Gabriel Bogdan Radu
+Property: ITI F.Severi Padova && Marco Ferraresso, Federico Chen, Gabriel Bogdan Radu
+
+dettaglio.js - Pagina dettaglio meteo
+Legge parametri URL (nome, lat, lon), chiama Open-Meteo e mostra meteo attuale + previsioni 5 giorni
 */
 
 const FORECAST_BASE = 'https://api.open-meteo.com/v1/forecast';
 
+// Carica dati meteo all'avvio della pagina
 document.addEventListener('DOMContentLoaded', async () => {
   const params = new URLSearchParams(window.location.search);
   const nome = params.get('nome') || 'Sconosciuto';
@@ -32,21 +35,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
+// Mostra messaggio di errore
 function showError(msg) {
   document.getElementById('current').innerHTML =
     `<p style="text-align:center;color:var(--text-secondary);">${msg}</p>`;
   document.getElementById('daily').innerHTML = '';
 }
 
-/* =======================
-   API OPEN METEO
-======================= */
+// Chiama API Open-Meteo per ottenere dati meteo
 async function fetchForecast(lat, lon) {
   const q = new URLSearchParams({
     latitude: lat,
     longitude: lon,
     timezone: 'auto',
-    current: 'temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,wind_speed_10m,weather_code',
+    current: 'temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,wind_speed_10m,wind_direction_10m,weather_code',
     daily: 'temperature_2m_max,temperature_2m_min,weather_code'
   });
 
@@ -55,9 +57,7 @@ async function fetchForecast(lat, lon) {
   return res.json();
 }
 
-/* =======================
-   METEO ATTUALE
-======================= */
+// Renderizza meteo attuale
 function renderCurrent(data) {
   const cur = data.current;
   if (!cur) return showError('Nessun dato disponibile');
@@ -88,7 +88,16 @@ function renderCurrent(data) {
 
       <div class="dettaglio-item">
         <span class="dettaglio-label">Vento</span>
-        <span class="dettaglio-valore">${Math.round(cur.wind_speed_10m)} km/h</span>
+        <span class="dettaglio-valore">
+          ${Math.round(cur.wind_speed_10m)} km/h
+        </span>
+        <span
+          class="vento-direzione"
+          style="transform: rotate(${cur.wind_direction_10m}deg);"
+          aria-label="Direzione vento ${cur.wind_direction_10m} gradi"
+        >
+          ↑
+        </span>
       </div>
 
       <div class="dettaglio-item">
@@ -104,9 +113,7 @@ function renderCurrent(data) {
   `;
 }
 
-/* =======================
-   PREVISIONI 5 GIORNI
-======================= */
+// Renderizza previsioni 5 giorni
 function renderDaily(data) {
   const d = data.daily;
   if (!d?.time) return;
@@ -132,9 +139,7 @@ function renderDaily(data) {
   document.getElementById('daily').innerHTML = html;
 }
 
-/* =======================
-   ICONE & TESTI
-======================= */
+// Ritorna l'emoji meteo in base al codice WMO
 function getWeatherIcon(code) {
   const icons = {
     0:'☀️',1:'🌤️',2:'⛅',3:'☁️',
@@ -148,6 +153,7 @@ function getWeatherIcon(code) {
   return icons[code] || '🌤️';
 }
 
+// Ritorna la descrizione meteo in italiano
 function getWeatherDescription(code) {
   const desc = {
     0:'Sereno',1:'Prevalentemente sereno',2:'Parzialmente nuvoloso',
@@ -161,12 +167,11 @@ function getWeatherDescription(code) {
   return desc[code] || 'Variabile';
 }
 
-/* =======================
-   SFONDO DINAMICO
-======================= */
+// Applica classe CSS per sfondo dinamico in base alle condizioni meteo
 function applyWeatherBackground(code) {
   const body = document.body;
 
+  // Rimuove classi weather precedenti
   [...body.classList].forEach(c => {
     if (c.startsWith('weather-')) body.classList.remove(c);
   });
