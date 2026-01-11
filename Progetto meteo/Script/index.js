@@ -27,7 +27,6 @@ function caricaComuni() {
         })
         .then(comuniArray => {
             comuni = comuniArray;
-            console.log(comuni);
             message.textContent = "Caricamento delle regioni completato con successo!";
             message.style.color = "black";
         })
