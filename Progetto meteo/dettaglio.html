@@ -1,40 +1,50 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Dettaglio Meteo</title>
-<link rel="icon" type="image/x-icon" href="Images/Logo/LogoMeteo.png">
-<link rel="stylesheet" href="Style/style.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Dettaglio Meteo</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="Images/Logo/LogoMeteo.png">
+    
+    <!-- Foglio di stile personalizzato -->
+    <link rel="stylesheet" href="Style/style.css" />
 </head>
 <body>
-<header>
-<h1 id="titolo">Dettaglio Meteo</h1>
-<p id="sottotitolo">Previsioni complete</p>
-</header>
+    <!-- Header con titolo dinamico (popolato via JS) -->
+    <header>
+        <h1 id="titolo">Dettaglio Meteo</h1>
+        <p id="sottotitolo">Previsioni complete</p>
+    </header>
 
-<main>
-<section id="meteo-attuale" class="card">
-<h2>Meteo Attuale</h2>
-<div id="current">
-<p>Caricamento...</p>
-</div>
-</section>
+    <main>
+        <!-- Card meteo attuale -->
+        <section id="meteo-attuale" class="card">
+            <h2>Meteo Attuale</h2>
+            <div id="current">
+                <p>Caricamento...</p>
+            </div>
+        </section>
 
-<section id="previsioni" class="card">
-<h2>Previsioni — 5 Giorni</h2>
-<div id="daily">
-<p>Caricamento...</p>
-</div>
-</section>
+        <!-- Card previsioni 5 giorni -->
+        <section id="previsioni" class="card">
+            <h2>Previsioni — 5 Giorni</h2>
+            <div id="daily">
+                <p>Caricamento...</p>
+            </div>
+        </section>
 
-<p><a href="index.html">← Torna alla mappa</a></p>
-</main>
+        <!-- Link per tornare alla mappa -->
+        <p><a href="index.html">← Torna alla mappa</a></p>
+    </main>
 
-<footer>
-<small>App Meteo — Dati forniti da Open-Meteo</small>
-</footer>
+    <!-- Footer con crediti -->
+    <footer>
+        <small>App Meteo — Dati forniti da Open-Meteo</small>
+    </footer>
 
-<script src="Script/dettaglio.js"></script>
+    <!-- Script per caricare e mostrare i dati meteo -->
+    <script src="Script/dettaglio.js"></script>
 </body>
 </html>
